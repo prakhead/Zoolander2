@@ -1,0 +1,96 @@
+---
+- hosts: localhost
+  become: yes
+  vars:
+    proxy_ip_address: 192.168.0.1
+  tasks:
+  - name: Remove existing docker packages (if any)
+    package: 
+      name: "{{ item }}"
+      state: absent
+    loop:
+    - docker
+    - docker-engine
+    - docker.io
+
+  - name: Install supporting packages
+    package: 
+      name: "{{ item }}"
+      state: present
+    loop:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - software-properties-common
+
+  - name: Add key for docker repository
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+
+  - name: Add docker repository
+    apt_repository:
+      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+      state: present
+
+  - name: Add docker packages
+    apt: 
+      name: "{{ item }}"
+      state: present
+      update_cache: yes
+    loop:
+    - docker-ce
+    - python-docker
+  
+  - name: Get current username
+    local_action: command whoami
+    register: running_user_name
+    become: no
+
+  - name: Add user to docker group
+    user:
+      name: "{{ running_user_name.stdout }}"
+      group: docker
+      append: yes
+
+      #  - name: install pip
+      #    package: 
+      #      name: python-pip
+      #      state: present
+
+      #  - name: Install docker-py pip module
+      #    pip: 
+      #      name: docker-py
+      #      state: present
+
+  - name: Run steamcache container
+    docker_container: 
+      name: steamcache
+      image: steamcache/generic:latest
+      ports:
+        - 80:80
+      restart_policy: unless-stopped
+      volumes:
+      - /cache/steam/data:/data/cache
+      - /cache/steam/logs:/data/logs
+
+  - name: Run sniproxy container
+    docker_container:
+      name: sniproxy
+      image: steamcache/sniproxy:latest
+      restart_policy: unless-stopped
+      ports: 
+        - 443:443
+         
+  - name: Run dns proxy container
+    docker_container:
+      name: steamcache-dns
+      image: steamcache/steamcache-dns:latest
+      restart_policy: unless-stopped
+      ports: 
+        - 53:53
+      env: 
+        STEAMCACHE_IP: "{{ proxy_ip_address }}"
+        UPSTEAM_DNS: 8.8.8.8
+
+
