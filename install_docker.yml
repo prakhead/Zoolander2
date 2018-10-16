@@ -2,7 +2,7 @@
 - hosts: localhost
   become: yes
   vars:
-    proxy_ip_address: 192.168.0.1
+    proxy_ip_address: 192.168.1.191
   tasks:
   - name: Remove existing docker packages (if any)
     package: 
@@ -73,6 +73,9 @@
       volumes:
       - /cache/steam/data:/data/cache
       - /cache/steam/logs:/data/logs
+      env:
+        CACHE_MEM_SIZE: 4096m
+        CACHE_DISK_SIZE: 500000m
 
   - name: Run sniproxy container
     docker_container:
@@ -88,7 +91,7 @@
       image: steamcache/steamcache-dns:latest
       restart_policy: unless-stopped
       ports: 
-        - 53:53
+      - "{{ proxy_ip_address }}:53:53/udp"
       env: 
         STEAMCACHE_IP: "{{ proxy_ip_address }}"
         UPSTEAM_DNS: 8.8.8.8
