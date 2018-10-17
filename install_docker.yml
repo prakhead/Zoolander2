@@ -83,17 +83,11 @@
       name: "{{ running_user_name.stdout }}"
       group: docker
       append: yes
-
-      #  - name: install pip
-      #    package: 
-      #      name: python-pip
-      #      state: present
-
-      #  - name: Install docker-py pip module
-      #    pip: 
-      #      name: docker-py
-      #      state: present
-
+      
+  - name: Print reminder about running newgrp
+    debug:
+      msg: "Run `newgrp -` to re-initialise user env for new group membership"
+      
   - name: Run steamcache container
     docker_container: 
       name: steamcache
