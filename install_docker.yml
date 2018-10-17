@@ -22,6 +22,8 @@
     - ca-certificates
     - curl
     - software-properties-common
+    - vim
+    - tmux
 
   - name: Add key for docker repository
     apt_key:
@@ -41,7 +43,36 @@
     loop:
     - docker-ce
     - python-docker
-  
+    
+  - name: customise global tmux.conf to switch prefix to CTRL-a
+    lineinfile: 
+      dest: /etc/tmux.conf
+      line: "unbind C-b"
+      create: yes
+      
+  - name: customise global tmux.conf to switch prefix to CTRL-a (2)
+    lineinfile:
+      dest: /etc/tmux.conf
+      line: "set -g prefix C-a"
+      insertafter: "unbind C-b"
+      
+  - name: Customise global tmux.conf to support 256 colours
+    lineinfile:
+    dest: /etc/tmux.conf 
+    line: 'set -g default-terminal "screen-256color"'
+    
+  - name: Customise global tmux.conf to start counting window numbers from 1 rather than 0
+    lineinfile:
+    dest: /etc/tmux.conf 
+    line: 'set -g base-index 1'
+    insertafter: EOF
+    
+  - name: Customise global tmux.conf to start counting pane numbers from 1 rather than 0
+    lineinfile:
+      dest: /etc/tmux.conf
+      line: 'setw -g pane-base-index 1'
+      insertafter: EOF
+      
   - name: Get current username
     local_action: command whoami
     register: running_user_name
