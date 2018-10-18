@@ -17,3 +17,6 @@ If the IP address of the machine should change you should only need to remove an
 * Remove container: `docker rm steamcache-dns`
 * Change proxy_ip_address variable in install_ansible.yml: `nano install_ansible.yml`
 * Recreate container: `cd Zoolander2 && bash ./install-docker.sh`
+
+## Monitoring system
+I have thown together a tmux script that should show some different indicators of system activity: `bash ./load_monitor.sh`
