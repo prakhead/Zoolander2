@@ -59,14 +59,14 @@
       
   - name: Customise global tmux.conf to support 256 colours
     lineinfile:
-    dest: /etc/tmux.conf 
-    line: 'set -g default-terminal "screen-256color"'
+      dest: /etc/tmux.conf 
+      line: 'set -g default-terminal "screen-256color"'
     
   - name: Customise global tmux.conf to start counting window numbers from 1 rather than 0
     lineinfile:
     dest: /etc/tmux.conf 
-    line: 'set -g base-index 1'
-    insertafter: EOF
+      line: 'set -g base-index 1'
+      insertafter: EOF
     
   - name: Customise global tmux.conf to start counting pane numbers from 1 rather than 0
     lineinfile:
