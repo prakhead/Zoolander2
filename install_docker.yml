@@ -24,6 +24,7 @@
     - software-properties-common
     - vim
     - tmux
+    - nano
 
   - name: Add key for docker repository
     apt_key:
