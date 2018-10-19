@@ -18,5 +18,8 @@ If the IP address of the machine should change you should only need to remove an
 * Change proxy_ip_address variable in install_ansible.yml: `nano install_docker.yml`
 * Recreate container: `ansible-playbook --ask-become-pass ./install_docker.yml`
 
+## Update to latest version
+* To get the latest version of these files: `cd ~/Zoolander2 && git pull`
+
 ## Monitoring system
 I have thown together a tmux script that should show some different indicators of system activity: `bash ./load_monitor.sh`
