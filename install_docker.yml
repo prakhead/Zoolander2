@@ -2,7 +2,7 @@
 - hosts: localhost
   become: yes
   vars:
-    proxy_ip_address: 192.168.1.191
+    proxy_ip_address: 192.168.122.135
   tasks:
   - name: Remove existing docker packages (if any)
     package: 
@@ -25,6 +25,7 @@
     - vim
     - tmux
     - nano
+    - iftop
 
   - name: Add key for docker repository
     apt_key:
@@ -64,7 +65,7 @@
     
   - name: Customise global tmux.conf to start counting window numbers from 1 rather than 0
     lineinfile:
-    dest: /etc/tmux.conf 
+      dest: /etc/tmux.conf 
       line: 'set -g base-index 1'
       insertafter: EOF
     
