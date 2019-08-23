@@ -3,6 +3,8 @@
   become: yes
   vars:
     proxy_ip_address: 192.168.122.164
+    repo: lancache 
+    # or older style repo: steamcache
   tasks:
   - name: Remove existing docker packages (if any)
     package: 
@@ -104,6 +106,7 @@
       env:
         CACHE_MEM_SIZE: 4096m
         CACHE_DISK_SIZE: 500000m
+    when: repo == "steamcache"
 
   - name: Run sniproxy container
     docker_container:
@@ -112,6 +115,7 @@
       restart_policy: unless-stopped
       ports: 
         - 443:443
+    when: repo == "steamcache"
          
   - name: Run dns proxy container
     docker_container:
@@ -123,6 +127,44 @@
       env: 
         STEAMCACHE_IP: "{{ proxy_ip_address }}"
         UPSTEAM_DNS: 8.8.8.8
+    when: repo == "steamcache"
+
+  - name: Run lancache container
+    docker_container: 
+      name: lancache
+      image: lancachenet/monolithic:latest
+      ports:
+        - 80:80
+      restart_policy: unless-stopped
+      volumes:
+      - /cache/steam/data:/data/cache
+      - /cache/steam/logs:/data/logs
+      env:
+        CACHE_MEM_SIZE: 4096m
+        CACHE_DISK_SIZE: 500000m
+    when: repo == "lancache"
+
+  - name: Run sniproxy container
+    docker_container:
+      name: sniproxy
+      image: lancachenet/sniproxy:latest
+      restart_policy: unless-stopped
+      ports: 
+        - 443:443
+    when: repo == "lancache"
+         
+  - name: Run dns proxy container
+    docker_container:
+      name: lancache-dns
+      image: lancachenet/lancache-dns:latest
+      restart_policy: unless-stopped
+      ports: 
+      - "{{ proxy_ip_address }}:53:53/udp"
+      env: 
+        STEAMCACHE_IP: "{{ proxy_ip_address }}"
+        #        UPSTEAM_DNS: 8.8.8.8
+        USE_GENERIC_CACHE: true
+    when: repo == "lancache"
 
   - name: Install samba
     package:
