@@ -2,6 +2,8 @@
 
 Zoolander2 config files (full description to follow).
 
+Scripts to hopefully help Windows users with the setup few of the projects provided here: https://github.com/steamcache
+
 Tested on Ubuntu 18.04
 
 ## Installation

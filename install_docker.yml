@@ -2,7 +2,7 @@
 - hosts: localhost
   become: yes
   vars:
-    proxy_ip_address: 192.168.1.191
+    proxy_ip_address: 192.168.122.164
   tasks:
   - name: Remove existing docker packages (if any)
     package: 
@@ -66,7 +66,7 @@
     
   - name: Customise global tmux.conf to start counting window numbers from 1 rather than 0
     lineinfile:
-    dest: /etc/tmux.conf 
+      dest: /etc/tmux.conf 
       line: 'set -g base-index 1'
       insertafter: EOF
     
@@ -124,4 +124,34 @@
         STEAMCACHE_IP: "{{ proxy_ip_address }}"
         UPSTEAM_DNS: 8.8.8.8
 
+  - name: Install samba
+    package:
+      name: "{{ item }}"
+      state: present
+    loop:
+    - samba
+    - samba-common
 
+  - name: Make share directory
+    file:
+      path: /share
+      owner: nobody
+      group: nogroup
+      mode : 0777
+      state: directory
+
+  - name: Copy samba config file
+    copy:
+      src: smb.conf
+      dest: /etc/samba/smb.conf
+      backup: yes
+      mode: 0644
+      owner: root
+      group: root
+    notify: Restart samba service
+
+  handlers:
+  - name: Restart samba service
+    service: 
+      name: smbd
+      state: restarted

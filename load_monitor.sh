@@ -3,7 +3,6 @@ SESSION=$USER
 TMUX_PANE_INDEX=0
 tmux -2 new-session -d -s $SESSION
 
-
 # Check if panes already exist
 tmux select-pane -t 4
 RESULT=$?
@@ -32,5 +31,5 @@ tmux select-pane -t $((3 + $TMUX_PANE_INDEX))
 tmux send-keys "tail -f /cache/steam/logs/access.log" C-m
 tmux select-pane -t $((4 + $TMUX_PANE_INDEX))
 tmux send-keys "tail -f /cache/steam/logs/error.log" C-m
-
-tmux select-layout tiled
+tmux attach
+#tmux select-layout tiled
