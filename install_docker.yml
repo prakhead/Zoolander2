@@ -163,7 +163,7 @@
       env: 
         STEAMCACHE_IP: "{{ proxy_ip_address }}"
         #        UPSTEAM_DNS: 8.8.8.8
-        USE_GENERIC_CACHE: true
+        USE_GENERIC_CACHE: "true"
     when: repo == "lancache"
 
   - name: Install samba
