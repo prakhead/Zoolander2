@@ -25,6 +25,8 @@
     - vim
     - tmux
     - nano
+    - htop
+    - iftop
 
   - name: Add key for docker repository
     apt_key:
